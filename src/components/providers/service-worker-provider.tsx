@@ -13,10 +13,9 @@ export function ServiceWorkerProvider({ children }: ServiceWorkerProviderProps) 
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
-    // Temporarily disable service worker to debug issues
-    // if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-    //   registerServiceWorker();
-    // }
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      registerServiceWorker();
+    }
   }, []);
 
   const registerServiceWorker = async () => {

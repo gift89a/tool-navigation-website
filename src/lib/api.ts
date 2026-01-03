@@ -2,7 +2,7 @@ import type { Category, Tool, ApiResponse, PaginationInfo } from '@/types';
 
 // Use relative URLs in production to avoid CORS issues
 const API_BASE_URL = typeof window !== 'undefined' 
-  ? window.location.origin 
+  ? '' // Use relative URLs in browser
   : process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}` 
     : 'http://localhost:3000';
