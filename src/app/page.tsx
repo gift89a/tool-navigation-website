@@ -77,7 +77,7 @@ export default function Home() {
     };
 
     loadTools();
-  }, [selectedCategory, setIsLoading, setTools, tools]); // 依赖项包含所有使用的状态
+  }, [selectedCategory]); // 只依赖selectedCategory
 
   const handleCategorySelect = (categoryId: string) => {
     if (selectedCategory === categoryId) {

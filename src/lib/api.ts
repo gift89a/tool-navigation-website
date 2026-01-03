@@ -144,7 +144,7 @@ class ApiClient {
     return {
       tools: response.data,
       pagination: response.pagination!,
-      query: params.query,
+      query: (response as any).query || params.query,
     };
   }
 }

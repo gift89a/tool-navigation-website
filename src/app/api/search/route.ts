@@ -35,11 +35,9 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json({
-      data: {
-        tools: paginatedResults,
-        pagination,
-        query,
-      },
+      data: paginatedResults,
+      pagination,
+      query,
       message: 'Search completed successfully',
     });
   } catch (error) {

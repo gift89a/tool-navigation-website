@@ -29,10 +29,8 @@ export async function GET(request: NextRequest) {
     });
 
     const response = NextResponse.json({
-      data: {
-        tools: result.tools,
-        pagination: result.pagination,
-      },
+      data: result.tools,
+      pagination: result.pagination,
       message: 'Tools fetched successfully',
     });
 

@@ -10,17 +10,54 @@ export async function GET(
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
 
+    // 模拟分类数据
+    const mockCategories = {
+      'development-tools': {
+        id: '3',
+        name: '开发工具',
+        slug: 'development-tools',
+        description: '程序开发相关的实用工具',
+        icon: '💻',
+        color: '#3B82F6',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      'image-processing': {
+        id: '2',
+        name: '图片处理',
+        slug: 'image-processing',
+        description: '图片编辑和处理工具',
+        icon: '🖼️',
+        color: '#EF4444',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    };
+
+    const category = mockCategories[slug as keyof typeof mockCategories];
+    if (!category) {
+      return NextResponse.json(
+        {
+          error: 'Category not found',
+          message: 'The requested category does not exist',
+        },
+        { status: 404 }
+      );
+    }
+
     // 模拟分类工具数据 - 在实际部署时会连接数据库
     const mockCategoryTools = {
       'development-tools': [
         {
           id: '1',
           name: 'JSON 格式化工具',
+          slug: 'json-formatter',
           description: '在线JSON格式化、压缩和验证工具',
           url: 'https://jsonformatter.org',
           icon: '📋',
-          category: { id: '3', name: '开发工具', slug: 'development-tools' },
-          tags: [{ id: '1', name: 'JSON' }, { id: '2', name: '格式化' }],
+          category,
+          categoryId: category.id,
+          tags: [{ id: '1', name: 'JSON', createdAt: new Date(), updatedAt: new Date() }],
           rating: 4.8,
           usageCount: 15420,
           isActive: true,
@@ -31,11 +68,13 @@ export async function GET(
         {
           id: '2',
           name: 'Base64 编解码',
+          slug: 'base64-encoder',
           description: '在线Base64编码和解码工具',
           url: 'https://base64encode.org',
           icon: '🔐',
-          category: { id: '3', name: '开发工具', slug: 'development-tools' },
-          tags: [{ id: '3', name: 'Base64' }, { id: '4', name: '编码' }],
+          category,
+          categoryId: category.id,
+          tags: [{ id: '3', name: 'Base64', createdAt: new Date(), updatedAt: new Date() }],
           rating: 4.6,
           usageCount: 12300,
           isActive: true,
@@ -48,11 +87,13 @@ export async function GET(
         {
           id: '3',
           name: '图片压缩工具',
+          slug: 'image-compressor',
           description: '在线图片压缩，支持JPG、PNG、WebP格式',
           url: 'https://tinypng.com',
           icon: '🖼️',
-          category: { id: '2', name: '图片处理', slug: 'image-processing' },
-          tags: [{ id: '5', name: '图片' }, { id: '6', name: '压缩' }],
+          category: mockCategories['image-processing'],
+          categoryId: mockCategories['image-processing'].id,
+          tags: [{ id: '5', name: '图片', createdAt: new Date(), updatedAt: new Date() }],
           rating: 4.9,
           usageCount: 18900,
           isActive: true,
@@ -80,9 +121,10 @@ export async function GET(
 
     return NextResponse.json({
       data: {
+        category,
         tools: paginatedTools,
-        pagination,
       },
+      pagination,
       message: 'Category tools fetched successfully',
     });
   } catch (error) {
