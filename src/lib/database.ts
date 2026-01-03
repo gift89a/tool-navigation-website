@@ -18,7 +18,6 @@ export const db = {
     if (isDatabaseAvailable()) {
       try {
         return await prisma.category.findMany({
-          where: { isActive: true },
           include: {
             _count: {
               select: { tools: true }
@@ -85,6 +84,7 @@ export const db = {
         };
       } catch (error) {
         console.warn('Database query failed, falling back to mock data:', error);
+        const { page = 1, limit = 12, category } = options;
         const tools = mockData.getMockTools(category, limit);
         return {
           tools,
@@ -99,6 +99,7 @@ export const db = {
     }
 
     // 使用 mock 数据
+    const { page = 1, limit = 12, category } = options;
     const tools = mockData.getMockTools(category, limit);
     return {
       tools,

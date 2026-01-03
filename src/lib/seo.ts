@@ -36,6 +36,7 @@ export function generateBaseMetadata(
     authors: [{ name: SITE_NAME }],
     creator: SITE_NAME,
     publisher: SITE_NAME,
+    manifest: '/manifest.json',
     robots: {
       index: true,
       follow: true,

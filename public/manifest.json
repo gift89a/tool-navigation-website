@@ -1,0 +1,22 @@
+{
+  "name": "工具导航",
+  "short_name": "工具导航",
+  "description": "发现和使用最佳在线工具的导航平台",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["productivity", "utilities", "developer"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}

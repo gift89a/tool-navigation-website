@@ -23,7 +23,6 @@ export interface Category {
   icon: string;
   color: string;
   slug: string;
-  isActive: boolean;
   tools?: Tool[];
   toolCount?: number;
   createdAt: Date;

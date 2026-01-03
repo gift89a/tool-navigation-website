@@ -11,7 +11,8 @@ interface Review {
   helpful: number;
   createdAt: string;
   updatedAt: string;
-  user: {
+  author?: string; // For backward compatibility with mock data
+  user?: {
     id: string;
     name?: string;
     avatar?: string;
