@@ -35,6 +35,7 @@ export default function FavoritesPage() {
         const mockTools: Tool[] = favorites.map((id, index) => ({
           id,
           name: `工具 ${index + 1}`,
+          slug: `tool-${index + 1}`,
           description: `这是收藏的工具 ${index + 1} 的描述`,
           icon: ['🔧', '📊', '🎨', '💻', '🔒'][index % 5],
           url: `https://example.com/tool${index + 1}`,
@@ -44,16 +45,20 @@ export default function FavoritesPage() {
             description: '分类描述',
             icon: ['💻', '🎨', '📄'][index % 3],
             color: ['#3B82F6', '#10B981', '#F59E0B'][index % 3],
-            slug: ['development', 'design', 'office'][index % 3]
+            slug: ['development', 'design', 'office'][index % 3],
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
           },
           categoryId: `cat${index % 3 + 1}`,
           tags: [
-            { id: `tag${index * 2 + 1}`, name: `标签${index * 2 + 1}` },
-            { id: `tag${index * 2 + 2}`, name: `标签${index * 2 + 2}` }
+            { id: `tag${index * 2 + 1}`, name: `标签${index * 2 + 1}`, createdAt: new Date(), updatedAt: new Date() },
+            { id: `tag${index * 2 + 2}`, name: `标签${index * 2 + 2}`, createdAt: new Date(), updatedAt: new Date() }
           ],
           rating: 4.0 + Math.random(),
           usageCount: Math.floor(Math.random() * 10000),
           isActive: true,
+          isFeatured: index % 3 === 0,
           createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
           updatedAt: new Date()
         }));

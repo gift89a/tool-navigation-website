@@ -10,6 +10,7 @@ async function getTool(id: string): Promise<Tool | null> {
   const mockTool: Tool = {
     id,
     name: 'JSON格式化工具',
+    slug: 'json-formatter',
     description: '在线JSON格式化、压缩、验证工具，支持语法高亮和错误提示',
     icon: '🔧',
     url: 'https://jsonformatter.org',
@@ -19,17 +20,21 @@ async function getTool(id: string): Promise<Tool | null> {
       description: '程序开发相关工具',
       icon: '💻',
       color: '#3B82F6',
-      slug: 'development'
+      slug: 'development',
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     categoryId: '1',
     tags: [
-      { id: '1', name: 'JSON' },
-      { id: '2', name: '格式化' },
-      { id: '3', name: '验证' }
+      { id: '1', name: 'JSON', createdAt: new Date(), updatedAt: new Date() },
+      { id: '2', name: '格式化', createdAt: new Date(), updatedAt: new Date() },
+      { id: '3', name: '验证', createdAt: new Date(), updatedAt: new Date() }
     ],
     rating: 4.8,
     usageCount: 15420,
     isActive: true,
+    isFeatured: true,
     createdAt: new Date(),
     updatedAt: new Date()
   };

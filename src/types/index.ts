@@ -1,6 +1,7 @@
 export interface Tool {
   id: string;
   name: string;
+  slug: string;
   description: string;
   icon: string;
   url: string;
@@ -10,6 +11,7 @@ export interface Tool {
   rating: number;
   usageCount: number;
   isActive: boolean;
+  isFeatured: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,14 +23,19 @@ export interface Category {
   icon: string;
   color: string;
   slug: string;
+  isActive: boolean;
   tools?: Tool[];
   toolCount?: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Tag {
   id: string;
   name: string;
   tools?: Tool[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface User {

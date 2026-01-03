@@ -1,12 +1,8 @@
-import { Metadata } from 'next';
+'use client';
+
 import { Layout } from '@/components/layout/layout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-
-export const metadata: Metadata = {
-  title: '离线模式 - 工具导航',
-  description: '您当前处于离线状态，部分功能可能不可用',
-};
 
 export default function OfflinePage() {
   return (

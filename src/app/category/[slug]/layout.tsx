@@ -12,22 +12,27 @@ async function getCategory(slug: string): Promise<{ category: Category; tools: T
     description: '程序开发相关的在线工具，包含代码格式化、编解码、调试等功能',
     icon: '💻',
     color: '#3B82F6',
-    slug
+    slug,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date()
   };
 
   const mockTools: Tool[] = [
     {
       id: '1',
       name: 'JSON格式化工具',
+      slug: 'json-formatter',
       description: '在线JSON格式化、压缩、验证工具',
       icon: '🔧',
       url: 'https://jsonformatter.org',
       category: mockCategory,
       categoryId: '1',
-      tags: [{ id: '1', name: 'JSON' }],
+      tags: [{ id: '1', name: 'JSON', createdAt: new Date(), updatedAt: new Date() }],
       rating: 4.8,
       usageCount: 15420,
       isActive: true,
+      isFeatured: false,
       createdAt: new Date(),
       updatedAt: new Date()
     }

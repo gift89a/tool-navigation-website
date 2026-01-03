@@ -13,6 +13,7 @@ import { ReviewList } from '@/components/reviews/review-list';
 import { analyticsManager } from '@/lib/analytics';
 import { useAppStore } from '@/store/app-store';
 import { apiClient } from '@/lib/api';
+import { getMockToolById, getMockTools } from '@/lib/mock-data';
 import type { Tool } from '@/types';
 
 export default function ToolDetailPage() {
@@ -38,33 +39,12 @@ export default function ToolDetailPage() {
         // const toolData = await apiClient.getTool(toolId);
         // setTool(toolData);
         
-        // 暂时使用模拟数据
-        const mockTool: Tool = {
-          id: toolId,
-          name: 'JSON格式化工具',
-          description: '在线JSON格式化、压缩、验证工具，支持语法高亮和错误提示',
-          icon: '🔧',
-          url: 'https://jsonformatter.org',
-          category: {
-            id: '1',
-            name: '开发工具',
-            description: '程序开发相关工具',
-            icon: '💻',
-            color: '#3B82F6',
-            slug: 'development'
-          },
-          categoryId: '1',
-          tags: [
-            { id: '1', name: 'JSON' },
-            { id: '2', name: '格式化' },
-            { id: '3', name: '验证' }
-          ],
-          rating: 4.8,
-          usageCount: 15420,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
+        // 使用 mock-data.ts 中的数据
+        const mockTool = getMockToolById(toolId);
+        if (!mockTool) {
+          console.error('Tool not found:', toolId);
+          return;
+        }
         
         setTool(mockTool);
         
@@ -72,14 +52,11 @@ export default function ToolDetailPage() {
         analyticsManager.recordToolView(mockTool.id, mockTool.name, mockTool.category.name);
         
         // 加载相关工具
-        const { tools } = await apiClient.getTools({
-          category: mockTool.category.slug,
-          limit: 4
-        });
+        const relatedTools = getMockTools(mockTool.categoryId, 4)
+          .filter(t => t.id !== toolId);
         
         // 过滤掉当前工具
-        const filtered = tools.filter(t => t.id !== toolId);
-        setRelatedTools(filtered.slice(0, 3));
+        setRelatedTools(relatedTools.slice(0, 3));
         
       } catch (error) {
         console.error('Failed to load tool detail:', error);

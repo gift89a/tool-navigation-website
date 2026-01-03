@@ -1,62 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+// import { prisma } from '@/lib/prisma';
 
 // GET /api/reviews - 获取评论列表
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const toolId = searchParams.get('toolId');
-    const userId = searchParams.get('userId');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const order = searchParams.get('order') || 'desc';
 
-    const skip = (page - 1) * limit;
-
-    // 构建查询条件
-    const where: any = {};
-    if (toolId) where.toolId = toolId;
-    if (userId) where.userId = userId;
-
-    // 获取评论
-    const reviews = await prisma.toolReview.findMany({
-      where,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-          },
-        },
-        tool: {
-          select: {
-            id: true,
-            name: true,
-            icon: true,
-          },
-        },
+    // TODO: 实际实现应该从数据库获取数据
+    // 暂时返回模拟数据
+    const mockReviews = [
+      {
+        id: '1',
+        toolId: toolId || '1',
+        rating: 5,
+        comment: '非常好用的工具，界面简洁，功能强大！',
+        author: '用户A',
+        createdAt: new Date('2024-01-15'),
+        helpful: 12,
+        isHelpful: false
       },
-      orderBy: {
-        [sortBy]: order as 'asc' | 'desc',
+      {
+        id: '2',
+        toolId: toolId || '1',
+        rating: 4,
+        comment: '功能不错，但是加载速度有点慢。',
+        author: '用户B',
+        createdAt: new Date('2024-01-10'),
+        helpful: 8,
+        isHelpful: true
       },
-      skip,
-      take: limit,
-    });
+      {
+        id: '3',
+        toolId: toolId || '1',
+        rating: 5,
+        comment: '完美的工具，推荐给所有开发者！',
+        author: '用户C',
+        createdAt: new Date('2024-01-05'),
+        helpful: 15,
+        isHelpful: false
+      }
+    ];
 
-    // 获取总数
-    const total = await prisma.toolReview.count({ where });
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedReviews = mockReviews.slice(startIndex, endIndex);
 
     return NextResponse.json({
       success: true,
-      data: reviews,
+      data: paginatedReviews,
       pagination: {
         page,
         limit,
-        total,
-        pages: Math.ceil(total / limit),
-      },
+        total: mockReviews.length,
+        hasMore: endIndex < mockReviews.length
+      }
     });
   } catch (error) {
     console.error('Failed to fetch reviews:', error);
@@ -71,79 +71,23 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { toolId, userId, rating, comment } = body;
+    const { toolId, rating, comment, author } = body;
 
-    // 验证必需字段
-    if (!toolId || !userId || !rating) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
-
-    // 验证评分范围
-    if (rating < 1 || rating > 5) {
-      return NextResponse.json(
-        { success: false, error: 'Rating must be between 1 and 5' },
-        { status: 400 }
-      );
-    }
-
-    // 检查工具是否存在
-    const tool = await prisma.tool.findUnique({
-      where: { id: toolId },
-    });
-
-    if (!tool) {
-      return NextResponse.json(
-        { success: false, error: 'Tool not found' },
-        { status: 404 }
-      );
-    }
-
-    // 创建或更新评论
-    const review = await prisma.toolReview.upsert({
-      where: {
-        userId_toolId: {
-          userId,
-          toolId,
-        },
-      },
-      update: {
-        rating,
-        comment,
-        updatedAt: new Date(),
-      },
-      create: {
-        toolId,
-        userId,
-        rating,
-        comment,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-          },
-        },
-        tool: {
-          select: {
-            id: true,
-            name: true,
-            icon: true,
-          },
-        },
-      },
-    });
-
-    // 更新工具的平均评分
-    await updateToolRating(toolId);
+    // TODO: 实际实现应该保存到数据库
+    const newReview = {
+      id: Date.now().toString(),
+      toolId,
+      rating,
+      comment,
+      author,
+      createdAt: new Date(),
+      helpful: 0,
+      isHelpful: false
+    };
 
     return NextResponse.json({
       success: true,
-      data: review,
+      data: newReview
     });
   } catch (error) {
     console.error('Failed to create review:', error);
@@ -151,26 +95,5 @@ export async function POST(request: NextRequest) {
       { success: false, error: 'Failed to create review' },
       { status: 500 }
     );
-  }
-}
-
-// 更新工具平均评分的辅助函数
-async function updateToolRating(toolId: string) {
-  try {
-    const reviews = await prisma.toolReview.findMany({
-      where: { toolId },
-      select: { rating: true },
-    });
-
-    if (reviews.length > 0) {
-      const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
-      
-      await prisma.tool.update({
-        where: { id: toolId },
-        data: { rating: Math.round(averageRating * 10) / 10 }, // 保留一位小数
-      });
-    }
-  } catch (error) {
-    console.error('Failed to update tool rating:', error);
   }
 }
