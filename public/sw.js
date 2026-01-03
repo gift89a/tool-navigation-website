@@ -11,8 +11,6 @@ const DYNAMIC_CACHE = 'dynamic-v1';
 const STATIC_ASSETS = [
   '/',
   '/offline',
-  '/manifest.json',
-  '/favicon.ico',
 ];
 
 // 需要缓存的 API 路径
@@ -29,7 +27,15 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
       console.log('Caching static assets');
-      return cache.addAll(STATIC_ASSETS);
+      // Try to cache each asset individually to avoid failures
+      return Promise.allSettled(
+        STATIC_ASSETS.map(asset => 
+          cache.add(asset).catch(err => {
+            console.warn(`Failed to cache ${asset}:`, err);
+            return null;
+          })
+        )
+      );
     })
   );
   
