@@ -16,13 +16,20 @@ export async function GET(request: NextRequest) {
       search
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       data: {
         tools: result.tools,
         pagination: result.pagination,
       },
       message: 'Tools fetched successfully',
     });
+
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    return response;
   } catch (error) {
     console.error('Error fetching tools:', error);
     return NextResponse.json(

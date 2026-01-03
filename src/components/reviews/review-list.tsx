@@ -210,15 +210,15 @@ export function ReviewList({
             <div className="flex items-start space-x-3">
               {/* 用户头像 */}
               <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                {review.user.avatar ? (
+                {review.user?.avatar ? (
                   <img 
                     src={review.user.avatar} 
-                    alt={review.user.name || '用户'} 
+                    alt={review.user?.name || review.author || '用户'} 
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
                   <span className="text-gray-500 dark:text-gray-400">
-                    {(review.user.name || '用户').charAt(0).toUpperCase()}
+                    {(review.user?.name || review.author || '用户').charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
@@ -228,7 +228,7 @@ export function ReviewList({
                 <div className="flex items-center justify-between mb-2">
                   <div>
                     <div className="font-medium text-gray-900 dark:text-gray-100">
-                      {review.user.name || '匿名用户'}
+                      {review.user?.name || review.author || '匿名用户'}
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="flex items-center">
