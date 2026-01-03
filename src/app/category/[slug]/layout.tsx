@@ -13,7 +13,6 @@ async function getCategory(slug: string): Promise<{ category: Category; tools: T
     icon: '💻',
     color: '#3B82F6',
     slug,
-    isActive: true,
     createdAt: new Date(),
     updatedAt: new Date()
   };

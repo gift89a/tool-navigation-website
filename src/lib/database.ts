@@ -3,7 +3,6 @@
  * 根据环境变量决定使用真实数据库还是 mock 数据
  */
 
-import { prisma } from './prisma';
 import * as mockData from './mock-data';
 
 // 检查是否有有效的数据库连接
@@ -11,12 +10,19 @@ export const isDatabaseAvailable = () => {
   return !!(process.env.DATABASE_URL && process.env.DATABASE_URL !== 'postgresql://user:password@localhost:5432/db?schema=public');
 };
 
+// 获取 Prisma 客户端（动态导入以避免构建时错误）
+async function getPrisma() {
+  const { prisma } = await import('./prisma');
+  return prisma;
+}
+
 // 数据库操作包装器
 export const db = {
   // 获取分类
   async getCategories() {
     if (isDatabaseAvailable()) {
       try {
+        const prisma = await getPrisma();
         return await prisma.category.findMany({
           include: {
             _count: {
@@ -42,6 +48,7 @@ export const db = {
   } = {}) {
     if (isDatabaseAvailable()) {
       try {
+        const prisma = await getPrisma();
         const { page = 1, limit = 12, category, search } = options;
         const skip = (page - 1) * limit;
 
@@ -84,7 +91,7 @@ export const db = {
         };
       } catch (error) {
         console.warn('Database query failed, falling back to mock data:', error);
-        const { page = 1, limit = 12, category } = options;
+        const { limit = 12, category } = options;
         const tools = mockData.getMockTools(category, limit);
         return {
           tools,
@@ -99,7 +106,7 @@ export const db = {
     }
 
     // 使用 mock 数据
-    const { page = 1, limit = 12, category } = options;
+    const { limit = 12, category } = options;
     const tools = mockData.getMockTools(category, limit);
     return {
       tools,
@@ -116,6 +123,7 @@ export const db = {
   async getToolById(id: string) {
     if (isDatabaseAvailable()) {
       try {
+        const prisma = await getPrisma();
         return await prisma.tool.findUnique({
           where: { id },
           include: {
@@ -135,6 +143,7 @@ export const db = {
   async searchTools(query: string, limit = 10) {
     if (isDatabaseAvailable()) {
       try {
+        const prisma = await getPrisma();
         return await prisma.tool.findMany({
           where: {
             isActive: true,
@@ -163,6 +172,7 @@ export const db = {
   async getPopularTools(limit = 5) {
     if (isDatabaseAvailable()) {
       try {
+        const prisma = await getPrisma();
         return await prisma.tool.findMany({
           where: { isActive: true },
           include: {
@@ -184,6 +194,7 @@ export const db = {
   async getTrendingTools(limit = 5) {
     if (isDatabaseAvailable()) {
       try {
+        const prisma = await getPrisma();
         // 这里可以实现更复杂的趋势算法
         return await prisma.tool.findMany({
           where: { isActive: true },

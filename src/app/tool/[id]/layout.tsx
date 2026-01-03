@@ -21,7 +21,6 @@ async function getTool(id: string): Promise<Tool | null> {
       icon: '💻',
       color: '#3B82F6',
       slug: 'development',
-      isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
     },
