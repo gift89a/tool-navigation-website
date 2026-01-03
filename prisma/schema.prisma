@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tool {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  icon        String
+  url         String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  tags        Tag[]
+  rating      Float    @default(0)
+  usageCount  Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  favorites   UserFavorite[]
+  analytics   ToolAnalytics[]
+  reviews     ToolReview[]
+  
+  @@map("tools")
+}
+
+model Category {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  icon        String
+  color       String
+  slug        String @unique
+  tools       Tool[]
+  
+  @@map("categories")
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String @unique
+  tools Tool[]
+  
+  @@map("tags")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  name      String?
+  avatar    String?
+  locale    String   @default("zh")
+  theme     String   @default("light")
+  createdAt DateTime @default(now())
+  
+  favorites UserFavorite[]
+  reviews   ToolReview[]
+  
+  @@map("users")
+}
+
+model UserFavorite {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  tool   Tool   @relation(fields: [toolId], references: [id])
+  toolId String
+  
+  @@unique([userId, toolId])
+  @@map("user_favorites")
+}
+
+model ToolAnalytics {
+  id        String   @id @default(cuid())
+  tool      Tool     @relation(fields: [toolId], references: [id])
+  toolId    String
+  clicks    Int      @default(0)
+  views     Int      @default(0)
+  date      DateTime @default(now())
+  
+  @@unique([toolId, date])
+  @@map("tool_analytics")
+}
+
+model AdSlot {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  position String
+  content  String?
+  isActive Boolean @default(false)
+  
+  @@map("ad_slots")
+}
+
+model ToolReview {
+  id      String @id @default(cuid())
+  tool    Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  toolId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+  rating  Int    // 1-5 stars
+  comment String?
+  helpful Int    @default(0) // helpful votes count
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, toolId])
+  @@map("tool_reviews")
+}
