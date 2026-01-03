@@ -1,48 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMockTools } from '@/lib/mock-data';
+import { db } from '@/lib/database';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
-    const category = searchParams.get('category');
-    const search = searchParams.get('search');
+    const category = searchParams.get('category') || undefined;
+    const search = searchParams.get('search') || undefined;
 
-    // 获取模拟工具数据
-    let filteredTools = getMockTools();
-
-    // 过滤工具
-    if (category) {
-      filteredTools = filteredTools.filter(tool => tool.categoryId === category);
-    }
-
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filteredTools = filteredTools.filter(tool =>
-        tool.name.toLowerCase().includes(searchLower) ||
-        tool.description.toLowerCase().includes(searchLower) ||
-        tool.tags.some(tag => tag.name.toLowerCase().includes(searchLower))
-      );
-    }
-
-    // 分页
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedTools = filteredTools.slice(startIndex, endIndex);
-
-    const pagination = {
+    const result = await db.getTools({
       page,
       limit,
-      total: filteredTools.length,
-      totalPages: Math.ceil(filteredTools.length / limit),
-      hasMore: endIndex < filteredTools.length,
-    };
+      category,
+      search
+    });
 
     return NextResponse.json({
       data: {
-        tools: paginatedTools,
-        pagination,
+        tools: result.tools,
+        pagination: result.pagination,
       },
       message: 'Tools fetched successfully',
     });
