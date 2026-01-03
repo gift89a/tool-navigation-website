@@ -221,3 +221,49 @@ git push origin main
 1. 查看 [Vercel 文档](https://vercel.com/docs)
 2. 检查 [Next.js 部署指南](https://nextjs.org/docs/deployment)
 3. 查看项目的 GitHub Issues
+
+## 最新修复记录
+
+### 2024年1月3日 - 生产环境问题修复
+
+✅ **已修复的问题：**
+
+1. **API URL 配置问题**
+   - 修复了 API 客户端硬编码 localhost 的问题
+   - 现在会自动使用正确的生产环境 URL
+   - 添加了 `NEXT_PUBLIC_APP_URL` 环境变量支持
+
+2. **缺失页面 404 错误**
+   - 添加了 `/about` - 关于我们页面
+   - 添加了 `/contact` - 联系我们页面  
+   - 添加了 `/privacy` - 隐私政策页面
+   - 添加了 `/terms` - 服务条款页面
+
+3. **JavaScript 运行时错误**
+   - 修复了评论组件中 `Cannot read properties of undefined (reading 'avatar')` 错误
+   - 改进了数据结构的容错处理
+
+4. **CORS 跨域问题**
+   - 为所有 API 路由添加了 CORS 头
+   - 确保生产环境下 API 调用正常工作
+
+**部署后验证步骤：**
+
+1. 访问 https://tool-navigation-website.vercel.app/
+2. 测试主要功能：
+   - ✅ 首页加载
+   - ✅ 分类浏览
+   - ✅ 搜索功能
+   - ✅ 工具详情页
+   - ✅ 新增页面（关于我们、联系我们等）
+3. 检查浏览器控制台无错误
+4. 验证移动端响应式设计
+
+**环境变量更新：**
+
+确保在 Vercel 项目设置中添加：
+```
+NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+```
+
+这个修复确保了网站在生产环境下完全正常工作，无需依赖本地开发服务器。
